@@ -1,0 +1,86 @@
+using Emgu.CV;
+using Emgu.CV.CvEnum;
+using Emgu.CV.Structure;
+using Emgu.CV.Util;
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace PrintAttackCountermeasure
+{
+    public partial class MainForm : Form
+    {
+        private VideoCapture videoCapture;
+        private CascadeClassifier faceCascade;
+        private Mat frame;
+        private Mat grayFrame;
+        private bool livenessDetected = false;
+
+        public MainForm()
+        {
+            InitializeComponent();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            // Load the Haar Cascade for face detection (you can replace it with a more advanced model).
+            faceCascade = new CascadeClassifier("haarcascade_frontalface_default.xml");
+
+            // Initialize the video capture from the default camera (0).
+            videoCapture = new VideoCapture(0);
+
+            // Create event handler for processing frames from the camera.
+            Application.Idle += ProcessFrame;
+        }
+
+        private void ProcessFrame(object sender, EventArgs e)
+        {
+            // Capture a frame from the camera.
+            frame = videoCapture.QueryFrame();
+
+            // Check if the frame is not null.
+            if (frame == null)
+            {
+                return;
+            }
+
+            // Convert the frame to grayscale for face detection.
+            CvInvoke.CvtColor(frame, grayFrame, ColorConversion.Bgr2Gray);
+
+            // Detect faces in the frame.
+            Rectangle[] faces = faceCascade.DetectMultiScale(grayFrame, 1.1, 3, Size.Empty, Size.Empty);
+
+            // Draw rectangles around detected faces.
+            foreach (Rectangle face in faces)
+            {
+                CvInvoke.Rectangle(frame, face, new Bgr(Color.Red).MCvScalar);
+            }
+
+            // Check if a face is detected to confirm liveness.
+            if (faces.Length > 0)
+            {
+                livenessDetected = true;
+            }
+            else
+            {
+                livenessDetected = false;
+            }
+
+            // Display the processed frame in a PictureBox.
+            pictureBox.Image = frame.ToImage<Bgr, byte>().ToBitmap();
+        }
+
+        private void btnAuthenticate_Click(object sender, EventArgs e)
+        {
+            // Check if liveness was detected.
+            if (livenessDetected)
+            {
+                MessageBox.Show("Liveness detected. User is live.");
+            }
+            else
+            {
+                MessageBox.Show("Liveness not detected. Possible print attack.");
+            }
+        }
+    }
+}

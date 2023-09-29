@@ -1,0 +1,47 @@
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace VideoAttackCountermeasure
+{
+    public partial class MainForm : Form
+    {
+        private bool attentivenessDetected = false;
+
+        public MainForm()
+        {
+            InitializeComponent();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            // Initialize your camera feed (e.g., by using a PictureBox).
+            // Set up any necessary camera or video input.
+        }
+
+        private void ProcessFrame()
+        {
+            // Implement video frame processing logic here.
+            // Check for user actions that indicate attentiveness (e.g., blinking eyes).
+
+            // If attentiveness is detected, set attentivenessDetected to true.
+            attentivenessDetected = true;
+        }
+
+        private void btnAuthenticate_Click(object sender, EventArgs e)
+        {
+            // Trigger the frame processing logic when the authentication button is clicked.
+            ProcessFrame();
+
+            // Check if attentiveness was detected.
+            if (attentivenessDetected)
+            {
+                MessageBox.Show("Attentiveness detected. User is live.");
+            }
+            else
+            {
+                MessageBox.Show("Attentiveness not detected. Possible video attack.");
+            }
+        }
+    }
+}

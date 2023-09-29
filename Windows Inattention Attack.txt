@@ -1,0 +1,61 @@
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Threading.Tasks;
+
+namespace InattentionAttackCountermeasure
+{
+    public partial class MainForm : Form
+    {
+        private bool attentivenessDetected = false;
+
+        public MainForm()
+        {
+            InitializeComponent();
+        }
+
+        private async void MainForm_Load(object sender, EventArgs e)
+        {
+            // Initialize your camera feed (e.g., by using a PictureBox).
+            // Set up any necessary camera or video input.
+
+            // Start the attentiveness detection task.
+            await DetectAttentivenessAsync();
+        }
+
+        private async Task DetectAttentivenessAsync()
+        {
+            // Implement your attentiveness detection logic here.
+            // For example, you might prompt the user to blink their eyes or perform specific actions.
+
+            // Simulate attentiveness detection for demonstration purposes.
+            await Task.Delay(5000); // Wait for 5 seconds.
+
+            // Set attentivenessDetected to true if attentiveness is detected.
+            attentivenessDetected = true;
+
+            // Display a message to the user based on attentiveness detection.
+            if (attentivenessDetected)
+            {
+                MessageBox.Show("Attentiveness detected. User is attentive.");
+            }
+            else
+            {
+                MessageBox.Show("Inattention detected. Possible inattention attack.");
+            }
+        }
+
+        private void btnAuthenticate_Click(object sender, EventArgs e)
+        {
+            // Check if attentiveness was previously detected.
+            if (attentivenessDetected)
+            {
+                MessageBox.Show("Authentication successful. User is attentive.");
+            }
+            else
+            {
+                MessageBox.Show("Authentication failed. Inattention detected.");
+            }
+        }
+    }
+}
